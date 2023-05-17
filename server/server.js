@@ -27,16 +27,23 @@ app.post('/', async (req, res) => {
 
         const response = await openai.createChatCompletion({
     model: "text-davinci-003",
-    prompt: "\"\"\"\nUtil exposes the following:\nutil.openai() -> authenticates & returns the openai module, which has the following functions:\nopenai.Completion.create(\n    prompt=\"<my prompt>\", # The prompt to start completing from\n    max_tokens=123, # The max number of tokens to generate\n    temperature=1.0 # A measure of randomness\n    echo=True, # Whether to return the prompt in addition to the generated completion\n)\n\"\"\"\nimport util\n\"\"\"\nCreate an OpenAI completion starting from the prompt \"Once upon an AI\", no more than 5 tokens. Does not include the prompt.\n\"\"\"\n",
+    prompt: `${prompt}`,
     temperature: 0,
-    max_tokens: 64,
+    max_tokens: 3000,
     top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    stop: ["\"\"\""],
-        })
+    frequency_penalty: 0.5,
+    presence_penalty: 0
+    })
 
+    res.status(200).send({
+        bot: response.data.choices[0].text
+    })
     } catch (error) {
-        
+        console.log(error);
+        res.status(500).send({error})
     }
+})
+
+app.listen(5000, () => {
+    console.log("server is running on port http://localhost:5000");
 })
